@@ -5,7 +5,7 @@ int SpellEnhancement::enhancement_points = 0;
 
 SpellEnhancement::SpellEnhancement() {
     range = 0;
-    mana_cost = 10;
+    mana_cost = 20;
 }
 
 int SpellEnhancement::get_range() const {
@@ -18,6 +18,10 @@ int SpellEnhancement::get_mana_cost() const {
 
 bool SpellEnhancement::requires_target() const {
     return false;
+}
+
+std::string SpellEnhancement::get_name() const {
+    return "Enhancement";
 }
 
 int SpellEnhancement::get_enhancement_points() {

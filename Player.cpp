@@ -1,9 +1,12 @@
 #include "Player.hpp"
+#include "Board.hpp"
 #include "Enemy.hpp"
+#include "EnemyTower.hpp"
+#include "EnemyAttackTower.hpp"
 #include <iostream>
 Player::Player() {
     hp = 20;
-    damage = 5;
+    damage = 2;
     x = 0;
     y = 0;
     mode = fight_mode::MELEE;
@@ -47,7 +50,8 @@ void Player::set_position(const int& new_x, const int& new_y) {
     y = new_y;
 }
 
-void Player::move(char movement_button, Board& board, std::vector<Enemy>& enemies) {
+void Player::move(char movement_button, Board& board, std::vector<Enemy>& enemies,
+                  EnemyTower& spawn_tower, EnemyAttackTower& attack_tower) {
     if (can_act) {
         int new_x = x, new_y = y;
 
@@ -64,7 +68,7 @@ void Player::move(char movement_button, Board& board, std::vector<Enemy>& enemie
 
             Cell& target_cell = board.get_cell(new_x, new_y);
 
-            if (target_cell.is_enemy_here() && mode==fight_mode::MELEE) {
+            if (target_cell.is_enemy_here() && mode == fight_mode::MELEE) {
                 for (auto& enemy : enemies) {
                     int enemy_x, enemy_y;
                     enemy.get_coords(enemy_x, enemy_y);
@@ -80,17 +84,53 @@ void Player::move(char movement_button, Board& board, std::vector<Enemy>& enemie
                     }
                 }
             }
+            else if (target_cell.is_tower_here() && mode == fight_mode::MELEE) {
+                int tower_x, tower_y;
+                spawn_tower.get_coords(tower_x, tower_y);
+                std::cout<<"Try attack "<<std::endl;
+                std::cout << "Player position: " << new_x << ", " << new_y << std::endl;
+                std::cout << "Tower position: " << tower_x << ", " << tower_y << std::endl;
+                if (tower_x == new_x && tower_y == new_y) {
+                    spawn_tower.take_damage(damage);
+                    std::cout << "Player attacked spawn tower for " << damage << " damage!" << std::endl;
+                    if (spawn_tower.is_death()) {
+                        target_cell.set_tower(false);
+                        std::cout << "Spawn tower destroyed!" << std::endl;
+                    }
+                    can_act = false;
+                    return;
+                }
+            }
+            else if (target_cell.is_attack_tower_here() && mode == fight_mode::MELEE) {
+                int attack_tower_x, attack_tower_y;
+                attack_tower.get_coords(attack_tower_x, attack_tower_y);
+                if (attack_tower_x == new_x && attack_tower_y == new_y) {
+                    attack_tower.take_damage(damage);
+                    std::cout << "Player attacked attack tower for " << damage << " damage!" << std::endl;
+                    if (attack_tower.is_death()) {
+                        target_cell.set_attack_tower(false);
+                        std::cout << "Attack tower destroyed!" << std::endl;
+                    }
+                    can_act = false;
+                    return;
+                }
+            }
             else if (board.can_move_to(new_x, new_y)) {
-                board.get_cell(x, y).set_player(false);
-                board.get_cell(new_x, new_y).set_player(true);
+                if (!target_cell.is_tower_here() && !target_cell.is_attack_tower_here() &&
+                    !target_cell.is_ally_here()){
+                    board.get_cell(x, y).set_player(false);
+                    board.get_cell(new_x, new_y).set_player(true);
 
-                x = new_x;
-                y = new_y;
-                can_act = false;
+                    x = new_x;
+                    y = new_y;
+                    can_act = false;
 
-                if (board.get_cell(x, y).is_slow_here()) {
-                    apply_slow();
-                    std::cout << "Stepped on slow cell! Will skip next turn." << std::endl;
+                    if (board.get_cell(x, y).is_slow_here()) {
+                        apply_slow();
+                        std::cout << "Stepped on slow cell! Will skip next turn." << std::endl;
+                    }
+                } else {
+                    std::cout << "Cannot move into taken cell!" << std::endl;
                 }
             }
         }
@@ -145,3 +185,5 @@ int Player::get_max_mana() const {
 void Player::set_mana(int new_mana) {
     mana = new_mana;
 }
+
+//добавить ренжовую атаку крестиком

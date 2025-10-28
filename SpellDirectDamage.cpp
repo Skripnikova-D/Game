@@ -3,7 +3,7 @@
 #include <iostream>
 #include "SpellEnhancement.hpp"
 SpellDirectDamage::SpellDirectDamage() {
-    damage = 3;
+    damage = 5;
     standart_range = 4;
     range = 4;
     mana_cost= 5;
@@ -31,6 +31,10 @@ bool SpellDirectDamage::requires_target() const {
 
 void SpellDirectDamage::set_range(int new_range) {
     range = new_range;
+}
+
+std::string SpellDirectDamage::get_name() const {
+    return "Direct Damage";
 }
 
 bool SpellDirectDamage::cast(Player& player, Board& board, std::vector<Enemy>& enemies,

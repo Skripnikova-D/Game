@@ -7,6 +7,8 @@ Cell::Cell() {
     is_slow = false;
     is_trap = false;
     is_ally = false;
+    is_tower = false;
+    is_attack_tower=false;
 }
 
 bool Cell::is_enemy_here() const {
@@ -28,6 +30,19 @@ bool Cell::is_ally_here() const {
     return is_ally;
 }
 
+bool Cell::is_trap_here() const {
+    return is_trap;
+}
+
+bool Cell::is_tower_here() const {
+    return is_tower;
+}
+
+bool Cell::is_attack_tower_here() const {
+    return is_attack_tower;
+}
+
+
 void Cell::set_player(bool condition_now) {
     is_player = condition_now;
 }
@@ -44,9 +59,6 @@ void Cell::set_slow(bool condition_now) {
     is_slow = condition_now;
 }
 
-bool Cell::is_trap_here() const {
-    return is_trap;
-}
 
 void Cell::set_trap(bool condition_now) {
     is_trap = condition_now;
@@ -54,4 +66,12 @@ void Cell::set_trap(bool condition_now) {
 
 void Cell::set_ally(bool condition_now) {
     is_ally = condition_now;
+}
+
+void Cell::set_tower(bool condition_now) {
+    is_tower = condition_now;
+}
+
+void Cell::set_attack_tower(bool condition_now) {
+    is_attack_tower= condition_now;
 }

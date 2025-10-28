@@ -1,8 +1,10 @@
 #pragma once
-#include "Board.hpp"
+#include <vector>
 
-
+class Board;
 class Enemy;
+class EnemyTower;
+class EnemyAttackTower;
 
 enum class fight_mode {
     MELEE, //5
@@ -30,7 +32,8 @@ public:
     bool get_is_slowed() const;
     void apply_slow();
     void set_position(const int& new_x, const int& new_y);
-    void move(char movement_button, Board& board, std::vector<Enemy>& enemies);
+    void move(char movement_button, Board& board, std::vector<Enemy>& enemies,
+              EnemyTower& spawn_tower, EnemyAttackTower& attack_tower);
     void melee_attack(Enemy& enemy);
     void reset_step();
     void change_attack_mode();

@@ -8,6 +8,8 @@ private:
     bool is_slow;
     bool is_trap;
     bool is_ally;
+    bool is_tower;
+    bool is_attack_tower;
 public:
     Cell();
 
@@ -17,6 +19,8 @@ public:
     bool is_slow_here() const;
     bool is_trap_here() const;
     bool is_ally_here() const;
+    bool is_tower_here() const;
+    bool is_attack_tower_here() const;
 
     void set_player(bool condition_now);
     void set_enemy(bool condition_now);
@@ -24,4 +28,6 @@ public:
     void set_slow(bool condition_now);
     void set_trap(bool condition_now);
     void set_ally(bool condition_now);
+    void set_tower(bool condition_now);
+    void set_attack_tower(bool condition_now);
 };

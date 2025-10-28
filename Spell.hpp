@@ -6,6 +6,7 @@
 #include "EnemyTower.hpp"
 #include "Ally.hpp"
 #include <vector>
+#include <string>
 
 class Spell {
 public:
@@ -15,6 +16,7 @@ public:
                       int targetX, int targetY) = 0;
 
     virtual int get_range() const = 0;
+    virtual std::string get_name() const = 0;
     virtual bool requires_target() const = 0;
     virtual int get_mana_cost() const = 0;
     virtual ~Spell() = default;

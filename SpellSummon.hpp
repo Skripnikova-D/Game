@@ -10,6 +10,7 @@ public:
     int get_range() const override;
     int get_mana_cost() const override;
     bool requires_target() const override;
+    std::string get_name() const override;
 
     bool cast(Player& player, Board& board, std::vector<Enemy>& enemies,
                       std::vector<Ally>& allies,

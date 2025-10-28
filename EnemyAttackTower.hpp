@@ -1,6 +1,6 @@
 #pragma once
-#include "Player.hpp"
-
+#include <vector>
+class Player;
 class Ally;
 
 class EnemyAttackTower {

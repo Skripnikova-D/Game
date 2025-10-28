@@ -12,7 +12,7 @@ public:
     int get_range() const override;
     int get_mana_cost() const override;
     bool requires_target() const override;
-
+    std::string get_name() const override;
     static int get_enhancement_points();
     static void add_enhancement_point();
     static void reset_enhancement_points();

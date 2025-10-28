@@ -56,7 +56,10 @@ void Enemy::move(Player& player, Board& board, std::vector<Ally>& allies) {
             can_act = false;
         }
 
-        else if (board.can_move_to(new_x, new_y) && !target_cell.is_enemy_here()) {
+        else if (board.can_move_to(new_x, new_y) &&
+         !target_cell.is_enemy_here() &&
+         !target_cell.is_tower_here() &&
+         !target_cell.is_attack_tower_here()) {
             board.get_cell(x, y).set_enemy(false);
             board.get_cell(new_x, new_y).set_enemy(true);
 
@@ -105,12 +108,14 @@ void Enemy::attack_ally(Ally &ally) {
 }
 
 void Enemy::take_damage(int player_damage) {
+    int old_hp = hp;
     if (player_damage > hp) {
         hp = 0;
     }
     else {
         hp = hp - player_damage;
     }
+    std::cout << "Enemy: " << old_hp << " -> " << hp << " (-" << player_damage << ")" << std::endl;
 }
 
 int Enemy::get_hp() const {

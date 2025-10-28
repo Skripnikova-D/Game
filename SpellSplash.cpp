@@ -4,8 +4,8 @@
 #include "SpellEnhancement.hpp"
 SpellSplash::SpellSplash() {
     range = 4;
-    mana_cost = 5;
-    damage = 2;
+    mana_cost = 10;
+    damage = 5;
     area_size=1;
 }
 
@@ -22,7 +22,11 @@ int SpellSplash::get_mana_cost() const {
 }
 
 bool SpellSplash::requires_target() const {
-    return false;
+    return true;
+}
+
+std::string SpellSplash::get_name() const {
+    return "Splash Damage";
 }
 
 bool SpellSplash::cast(Player& player, Board& board, std::vector<Enemy>& enemies,

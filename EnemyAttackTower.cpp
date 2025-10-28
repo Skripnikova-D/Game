@@ -1,4 +1,5 @@
 #include "EnemyAttackTower.hpp"
+#include "Player.hpp"
 #include "Ally.hpp"
 #include <iostream>
 EnemyAttackTower::EnemyAttackTower(int cur_x, int cur_y) {
@@ -81,11 +82,13 @@ void EnemyAttackTower::attack_ally(Ally& ally) {
 }
 
 void EnemyAttackTower::take_damage(int player_damage) {
+    int old_hp = hp;
     if (player_damage > hp) {
         hp = 0;
     } else {
         hp = hp - player_damage;
     }
+    std::cout << "Attack Tower: " << old_hp << " -> " << hp << " (-" << player_damage << ")" << std::endl;
 }
 
 bool EnemyAttackTower::is_death() const {

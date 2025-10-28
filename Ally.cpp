@@ -45,26 +45,38 @@ void Ally::move(Board& board, std::vector<Enemy>& enemies,
     int distance_attack_tower = std::abs(tower_attackX - x) + std::abs(tower_attackY - y);
 
     if (closest_enemy) {
+        // выбираем самую близкую цель из доступных
         if (min_distance <= distance_tower && min_distance <= distance_attack_tower) {
             target_type = ENEMY;
-        } else if (distance_tower <= distance_attack_tower) {
+        } else if (distance_tower <= distance_attack_tower && !tower.is_death()) {
             target_x = towerX;
             target_y = towerY;
             target_type = TOWER;
-        } else {
+        } else if (!tower_attack.is_death()) {
             target_x = tower_attackX;
             target_y = tower_attackY;
             target_type = ATTACK_TOWER;
+        } else {
+            target_type = ENEMY; // Башни мертвы - атакуем врага
         }
     } else {
-        if (distance_tower <= distance_attack_tower) {
+        // Нет врагов - атакуем башни
+        if (!tower.is_death() && !tower_attack.is_death()) {
+            target_x = (distance_tower <= distance_attack_tower) ? towerX : tower_attackX;
+            target_y = (distance_tower <= distance_attack_tower) ? towerY : tower_attackY;
+            target_type = (distance_tower <= distance_attack_tower) ? TOWER : ATTACK_TOWER;
+        } else if (!tower.is_death()) {
             target_x = towerX;
             target_y = towerY;
             target_type = TOWER;
-        } else {
+        } else if (!tower_attack.is_death()) {
             target_x = tower_attackX;
             target_y = tower_attackY;
             target_type = ATTACK_TOWER;
+        } else {
+            std::cout << "All targets destroyed!" << std::endl;
+            can_act = false;
+            return;
         }
     }
 
@@ -96,40 +108,29 @@ void Ally::move(Board& board, std::vector<Enemy>& enemies,
                 }
             }
         }
-        // Атака башни-спавнера (если мы уже рядом с ней)
         else if (new_x == towerX && new_y == towerY && target_type == TOWER) {
             tower.take_damage(damage);
             std::cout << "Ally attacked spawn tower for " << damage << " damage!" << std::endl;
             can_act = false;
             return;
         }
-        // Атака атакующей башни (если мы уже рядом с ней)
         else if (new_x == tower_attackX && new_y == tower_attackY && target_type == ATTACK_TOWER) {
             tower_attack.take_damage(damage);
             std::cout << "Ally attacked attack tower for " << damage << " damage!" << std::endl;
             can_act = false;
             return;
         }
-        // Движение на свободную клетку
-        else if (board.can_move_to(new_x, new_y) && !target_cell.is_enemy_here()) {
+        else if (board.can_move_to(new_x, new_y) &&
+         !target_cell.is_enemy_here() &&
+         !target_cell.is_tower_here() &&
+         !target_cell.is_attack_tower_here() &&
+         !target_cell.is_ally_here() &&
+         !target_cell.is_player_here()) {
             board.get_cell(x, y).set_ally(false);
             board.get_cell(new_x, new_y).set_ally(true);
             x = new_x;
             y = new_y;
             can_act = false;
-
-            // Вывод информации о движении
-            switch (target_type) {
-                case ENEMY:
-                    std::cout << "Ally moving towards enemy at (" << target_x << ", " << target_y << ")" << std::endl;
-                    break;
-                case TOWER:
-                    std::cout << "Ally moving towards spawn tower at (" << target_x << ", " << target_y << ")" << std::endl;
-                    break;
-                case ATTACK_TOWER:
-                    std::cout << "Ally moving towards attack tower at (" << target_x << ", " << target_y << ")" << std::endl;
-                    break;
-            }
         }
     }
     can_act = false;
@@ -141,11 +142,13 @@ void Ally::attack_enemy(Enemy& enemy) {
 }
 
 void Ally::take_damage(int enemy_damage) {
+    int old_hp=hp;
     if (enemy_damage > hp) {
         hp = 0;
     } else {
         hp -= enemy_damage;
     }
+    std::cout << "Ally: " << old_hp << " -> " << hp << " (-" << enemy_damage << ")" << std::endl;
 }
 
 int Ally::get_hp() const {

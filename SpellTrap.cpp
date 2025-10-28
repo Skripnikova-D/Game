@@ -22,7 +22,11 @@ int SpellTrap::get_mana_cost() const {
 }
 
 bool SpellTrap::requires_target() const {
-    return false;
+    return true;
+}
+
+std::string SpellTrap::get_name() const {
+    return "Trap";
 }
 
 bool SpellTrap::cast(Player& player, Board& board, std::vector<Enemy>& enemies,
